@@ -1,10 +1,11 @@
 import streamlit as st
 import openai
 
-# ⚠️ TESTĒŠANAS NOLŪKOS — Nomaini pēc tam uz drošāku variantu!
-openai.api_key = "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"
+# ⚠️ Tikai TESTĒŠANAI — pēc tam nomaini vai izmanto .env
+openai.api_key = "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"
 
-st.title("Zīmējuma pārvēršana par fotoreālistisku attēlu 🧠🎨")
+st.set_page_config(page_title="Zīmējuma pārvēršana", layout="centered")
+st.title("🧒➡️🖼️ Zīmējuma pārvēršana par fotoreālistisku tēlu")
 
 uploaded_file = st.file_uploader("Augšupielādē bērna zīmējumu", type=["jpg", "jpeg", "png"])
 
@@ -17,17 +18,22 @@ if uploaded_file is not None:
         "Do not alter the design, just make it look like it exists in the real world with realistic materials, textures, and lighting."
     )
 
-    user_prompt = st.text_area("Papildus apraksts (neobligāti)", default_prompt, height=200)
+    user_prompt = st.text_area("Apraksts ģenerēšanai (neobligāti):", default_prompt, height=200)
 
-    if st.button("Ģenerēt attēlu"):
-        with st.spinner("Ģenerēju..."):
-            response = openai.images.generate(
-                model="dall-e-3",
-                prompt=user_prompt,
-                size="1024x1024",
-                quality="standard",
-                n=1
-            )
-            image_url = response.data[0].url
-            st.image(image_url, caption="Fotoreālistiska versija", use_container_width=True)
-            st.markdown(f"[Lejupielādēt attēlu]({image_url})")
+    if st.button("🎨 Ģenerēt attēlu"):
+        with st.spinner("Lūdzu uzgaidi..."):
+            try:
+                response = openai.images.generate(
+                    model="dall-e-3",
+                    prompt=user_prompt,
+                    size="1024x1024",
+                    quality="standard",
+                    n=1
+                )
+                image_url = response.data[0].url
+                st.image(image_url, caption="Rezultāts (fotoreālistisks)", use_container_width=True)
+                st.success("✅ Attēls veiksmīgi ģenerēts!")
+                st.markdown(f"[⬇️ Lejupielādēt attēlu]({image_url})")
+
+            except Exception as e:
+                st.error(f"⚠️ Kļūda: {str(e)}")
