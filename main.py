@@ -2,7 +2,7 @@ import streamlit as st
 import openai
 
 # ⚠️ Tikai TESTĒŠANAI — pēc tam nomaini vai izmanto .env
-openai.api_key = "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"
+openai.api_key = "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"
 
 st.set_page_config(page_title="Zīmējuma pārvēršana", layout="centered")
 st.title("🧒➡️🖼️ Zīmējuma pārvēršana par fotoreālistisku tēlu")
