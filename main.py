@@ -1,7 +1,7 @@
 import streamlit as st
 import openai
 
-# Ievieto šeit savu OpenAI API atslēgu
+# ⚠️ TESTĒŠANAS NOLŪKOS — Nomaini pēc tam uz drošāku variantu!
 openai.api_key = "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"
 
 st.title("Zīmējuma pārvēršana par fotoreālistisku attēlu 🧠🎨")
@@ -21,13 +21,13 @@ if uploaded_file is not None:
 
     if st.button("Ģenerēt attēlu"):
         with st.spinner("Ģenerēju..."):
-            response = openai.Image.create(
+            response = openai.images.generate(
+                model="dall-e-3",
                 prompt=user_prompt,
-                n=1,
                 size="1024x1024",
-                model="dall-e-3"
+                quality="standard",
+                n=1
             )
-            image_url = response['data'][0]['url']
+            image_url = response.data[0].url
             st.image(image_url, caption="Fotoreālistiska versija", use_container_width=True)
             st.markdown(f"[Lejupielādēt attēlu]({image_url})")
-
