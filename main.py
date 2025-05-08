@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO
 
 # 🚨 Izmanto slepeno API atslēgu no .streamlit/secrets.toml
-client = openai.OpenAI(api_key=st.secrets["openai_api_key"])
+openai.api_key = st.secrets["openai_api_key"]
 
 # 🌐 Lapas iestatījumi
 st.set_page_config(page_title="Zīmējuma pārvēršana", layout="centered")
@@ -41,13 +41,12 @@ if uploaded_file is not None:
         with st.spinner("Lūdzu uzgaidi..."):
             try:
                 # Nosūtot attēlu uz OpenAI DALL-E API (izmantojot promptu)
-                response = client.images.create(
-                    model="dall-e-3", 
+                response = openai.Image.create(
                     prompt=user_prompt, 
                     n=1, 
                     size="1024x1024"
                 )
-                image_url = response.data[0].url
+                image_url = response['data'][0]['url']
                 st.image(image_url, caption="Rezultāts (fotoreālistisks)", use_container_width=True)
                 st.success("✅ Attēls veiksmīgi ģenerēts!")
                 st.markdown(f"[⬇️ Lejupielādēt attēlu]({image_url})")
