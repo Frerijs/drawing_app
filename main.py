@@ -40,11 +40,11 @@ if uploaded_file is not None:
     if st.button("🎨 Ģenerēt attēlu"):
         with st.spinner("Lūdzu uzgaidi..."):
             try:
-                # Nosūtot attēlu uz OpenAI
-                response = client.images.create_edit(
-                    image=image_data,
-                    prompt=user_prompt,
-                    n=1,
+                # Nosūtot attēlu uz OpenAI DALL-E API (izmantojot promptu)
+                response = client.images.create(
+                    model="dall-e-3", 
+                    prompt=user_prompt, 
+                    n=1, 
                     size="1024x1024"
                 )
                 image_url = response.data[0].url
