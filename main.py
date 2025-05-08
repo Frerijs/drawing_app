@@ -1,10 +1,11 @@
 import streamlit as st
+from PIL import Image
+from io import BytesIO
+import requests
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
 import torchvision.models as models
-from PIL import Image
-import os
 
 st.set_page_config(page_title="Zīmējuma stilizācija", layout="centered")
 st.title("🎨 Pārvērt savu zīmējumu par mākslas darbu!")
@@ -27,6 +28,10 @@ def im_convert(tensor):
     image = image.squeeze(0)
     image = transforms.ToPILImage()(image)
     return image
+
+def get_image_from_url(url):
+    response = requests.get(url)
+    return Image.open(BytesIO(response.content))
 
 # ---------- Neirontīkls ----------
 def get_features(image, model, layers=None):
@@ -80,14 +85,16 @@ def run_style_transfer(content_img, style_img, model, steps=300, style_weight=1e
 
     return target
 
+# ---------- Stila URL vārdnīca ----------
+style_urls = {
+    "Van Gogh": "https://upload.wikimedia.org/wikipedia/commons/4/47/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
+    "Anime": "https://huggingface.co/datasets/Narsil/anime/resolve/main/00000.png",
+    "Watercolor": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Watercolor_painting_of_a_flower.jpg"
+}
+
 # ---------- Interfeiss ----------
 uploaded_file = st.file_uploader("📄 Augšupielādē savu zīmējumu (JPG/PNG)", type=["jpg", "jpeg", "png"])
-style_option = st.selectbox("🖼️ Izvēlies stilu:", ["Van Gogh", "Anime", "Watercolor"])
-style_path = {
-    "Van Gogh": "styles/vangogh.jpg",
-    "Anime": "styles/anime.jpg",
-    "Watercolor": "styles/watercolor.jpg"
-}
+style_option = st.selectbox("🖼️ Izvēlies stilu:", list(style_urls.keys()))
 
 if uploaded_file:
     st.image(uploaded_file, caption="Oriģinālais zīmējums", use_container_width=True)
@@ -95,7 +102,8 @@ if uploaded_file:
     if st.button("🎬 Stilizēt!"):
         with st.spinner("🔧 Ģenerē... Lūdzu uzgaidi ~30s"):
             content = load_image(Image.open(uploaded_file))
-            style = load_image(Image.open(style_path[style_option]))
+            style_image = get_image_from_url(style_urls[style_option])
+            style = load_image(style_image)
 
             vgg = models.vgg19(pretrained=True).features.to(device).eval()
             for param in vgg.parameters():
