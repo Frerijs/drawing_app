@@ -13,8 +13,10 @@ st.set_page_config(page_title="Zīmējums kļūst reāls", layout="centered")
 st.title("🎨 No bērna zīmējuma uz 3D reālistisku attēlu")
 
 # Lietotāja instrukcija
-st.markdown("**1.** Augšupielādē bērna zīmējumu (JPG/PNG).  
-**2.** Noklikšķini uz 'Ģenerēt attēlu', lai pārvērstu to fotoreālistiskā vai 3D renderētā versijā.")
+st.markdown("""
+**1.** Augšupielādē bērna zīmējumu (JPG/PNG).  
+**2.** Noklikšķini uz 'Ģenerēt attēlu', lai pārvērstu to fotoreālistiskā vai 3D renderētā versijā.
+""")
 
 # Augšupielāde
 uploaded_file = st.file_uploader("Augšupielādē zīmējumu:", type=["jpg", "jpeg", "png"])
