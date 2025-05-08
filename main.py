@@ -1,8 +1,9 @@
 import streamlit as st
-import openai  # <-- Nepieciešams importēt arī OpenAI
+import openai
+from PIL import Image
 
-# 🔐 Ielasa API atslēgu no Streamlit secrets
-openai.api_key = st.secrets["openai_api_key"]
+# Izveido OpenAI klientu ar slepeno API atslēgu
+client = openai.OpenAI(api_key=st.secrets["openai_api_key"])
 
 st.set_page_config(page_title="Zīmējuma pārvēršana", layout="centered")
 st.title("🧒➡️🖼️ Zīmējuma pārvēršana par fotoreālistisku tēlu")
@@ -10,7 +11,8 @@ st.title("🧒➡️🖼️ Zīmējuma pārvēršana par fotoreālistisku tēlu"
 uploaded_file = st.file_uploader("Augšupielādē bērna zīmējumu", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    st.image(uploaded_file, caption="Oriģinālais zīmējums", use_container_width=True)
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Oriģinālais zīmējums", use_container_width=True)
 
     default_prompt = (
         "A photorealistic render of a creature or object based exactly on a child's drawing. "
@@ -23,7 +25,7 @@ if uploaded_file is not None:
     if st.button("🎨 Ģenerēt attēlu"):
         with st.spinner("Lūdzu uzgaidi..."):
             try:
-                response = openai.images.generate(
+                response = client.images.generate(
                     model="dall-e-3",
                     prompt=user_prompt,
                     size="1024x1024",
