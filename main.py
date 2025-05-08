@@ -1,6 +1,7 @@
 import streamlit as st
 import openai
 from PIL import Image
+from io import BytesIO
 
 # 🚨 Izmanto slepeno API atslēgu no .streamlit/secrets.toml
 client = openai.OpenAI(api_key=st.secrets["openai_api_key"])
@@ -31,15 +32,20 @@ if uploaded_file is not None:
     # ✏️ Lietotāja apraksts (ja nepieciešams)
     user_prompt = st.text_area("Apraksts ģenerēšanai (neobligāti):", default_prompt, height=250)
 
+    # Attēla sagatavošana
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    image_data = buffer.getvalue()
+
     if st.button("🎨 Ģenerēt attēlu"):
         with st.spinner("Lūdzu uzgaidi..."):
             try:
-                response = client.images.generate(
-                    model="dall-e-3",
+                # Nosūtot attēlu uz OpenAI
+                response = client.images.create_edit(
+                    image=image_data,
                     prompt=user_prompt,
-                    size="1024x1024",
-                    quality="standard",
-                    n=1
+                    n=1,
+                    size="1024x1024"
                 )
                 image_url = response.data[0].url
                 st.image(image_url, caption="Rezultāts (fotoreālistisks)", use_container_width=True)
