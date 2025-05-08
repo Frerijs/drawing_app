@@ -1,8 +1,8 @@
 import streamlit as st
-import openai
+import openai  # <-- Nepieciešams importēt arī OpenAI
 
-# ⚠️ Tikai TESTĒŠANAI — pēc tam nomaini vai izmanto .env
-openai.api_key = "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"
+# 🔐 Ielasa API atslēgu no Streamlit secrets
+openai.api_key = st.secrets["openai_api_key"]
 
 st.set_page_config(page_title="Zīmējuma pārvēršana", layout="centered")
 st.title("🧒➡️🖼️ Zīmējuma pārvēršana par fotoreālistisku tēlu")
